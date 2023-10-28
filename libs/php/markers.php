@@ -4,12 +4,8 @@
     error_reporting(E_ALL);
     
     $executionStartTime = microtime(true);
-
-    $from_currency = $_REQUEST['from_currency'];
-
     
-    
-    $url= "https://prepaid.currconv.com/api/v7/convert?q=USD_{$from_currency}&compact=ultra&apiKey=pr_7d313e08a26a45af8d9e7416d8b6125c";
+    $url= "http://api.geonames.org/searchJSON?formatted=true&q=" . $_REQUEST['q'] . "&country=" . $_REQUEST['country'] . "&maxRows=200&lang=es&username=favour21_&style=full";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -31,4 +27,4 @@
     
     echo json_encode($output);
 
-?>*
+?>

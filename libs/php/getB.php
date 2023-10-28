@@ -14,7 +14,7 @@ for($i=0;$i<sizeof($features);$i++){
     }
 }
 
-//header('Content-Type: application/json; charset=UTF-8');
+header('Content-Type: application/json; charset=UTF-8');
 
 echo json_encode($poly);
 ?>

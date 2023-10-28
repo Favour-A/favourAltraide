@@ -1,394 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Gazetteer</title>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My Gazetteer</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.4.0/easy-button.min.css">
-    <link rel="stylesheet" href="./libs/css/style.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.4.0/easy-button.min.css">
+      <link rel="stylesheet" href="./libs/css/style.css">
 
 
-</head>
-<body>
+  </head>
+  <body>
 
-  <div class="spinner"></div>
+    <div class="spinner"></div>
 
-    
-    <span id="ChooseCountry">
-        <select id="country" class="form-select shadow-sm">
+      
+      <span id="ChooseCountry">
+          <select id="country" class="form-select shadow-sm">
+            
+          </select>
+        </span>
+        
+        <div id="map"></div>
+        
+        <div id="myModal" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow">
+              <div class="modal-header bg-primary bg-gradient text-white">
+                <h5 class="modal-title">Overview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <table class="table table-striped">
+                  <tr>
+        
+                    <td class="text-center">
+                    <img id="flags" src="./libs/image/flag.png" alt="flag">
+                    </td>
+        
+                    <td id="countryName">
+                      
+                    </td>
+        
+                    <td id="capitalCity" class="text-end text-primary fw-bold">
+                      
+                    </td>
+        
+                  </tr>
+                  <tr>
+                    <td class="text-center">
+                      <i class="fa-solid fa-globe fa-xl"></i>
+                    </td>
+                    <td>
+                      Continent
+                    </td>
+                    <td id="continent" class="text-end text-primary fw-bold"></td>
+                  </tr>
+                  <tr>
+                    
+      
+                    <td class="text-center">
+                        <i class="fa-solid fa-street-view fa-xl"></i>
+                    </td>
           
-        </select>
-      </span>
-      
-      <div id="map"></div>
-      
-      <div id="myModal" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
-      
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-          <div class="modal-content shadow">
-            <div class="modal-header bg-primary bg-gradient text-white">
-              <h5 class="modal-title">Overview</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <td>
+                        Population
+                    </td>
+          
+                    <td id="population" class="text-end text-primary fw-bold">
+                        
+                    </td>
+          
+                  </tr>
+                  <tr>
+                    <td class="text-center">
+                      <i class="fa-solid fa-language"></i>
+                    </td>
+                    <td>
+                      Language
+                    </td>
+                    <td id="language" class="text-end text-primary fw-bold"></td>
+                  </tr>
+                
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+              </div>
             </div>
+          </div>
+        </div> 
+      
+        <div id="modal1" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+          
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow">
+              <div class="modal-header bg-primary bg-gradient text-white">
+                <h5 class="modal-title">Weather</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container text-center">
+                  <h6 class="fs-4 fw-bolder">Current Weather</h6>
+                    <div class="row  bg-dark-subtle">
+                    
+                      <div class="col-sm-6" id="icon">
+                      </div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6">temp <br> <span id="temperature"></span></div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6">feels like <br> <span id="feelslike"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8 ">
+                          <div class="fw-bold fs-6">Description: <span id="weatherDescription"></span></div>
+                        </div>
+                    
+                  </div>
+
+                  <div class="container text-center">
+                    <h6 class="fs-4 fw-bolder">Weather Forecast</h6>
+                      <div class="row  bg-dark-subtle">
+                      
+                        <div class="col-sm-6" id="iconforecast"></div>
+                        <div class="col-sm-4 fw-light fs-6">date: <span id="date"></span></div>
+                      </div>
+                      <div class="row">
+                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="maxtemp">Maximum Temperature: <br> <span id="maxtemp"></span></div>
+                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="mintemp">Minimum Temperature: <br> <span id="mintemp"></span></div>
+                      <div class="row">
+                          <div class="col-sm-8">
+                            <div class=" bg-danger-subtle fw-bold fs-6">Description: <span id="weatherDescriptionForecast"></span></div>
+                          </div>
+                      
+                      </div>
+                  </div>
+                  
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      </div>
+
+      
+        <div id="myTimeModal" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow">
+              <div class="modal-header bg-primary bg-gradient text-white">
+                <h5 class="modal-title">Timezone</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <div class="modal-body">
+              <table class="table table-striped">
+                <tr >
+                  <td class="text-center">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                  </td>
+                  <td>
+                    Timezone
+                  </td>
+                  <td id="timeZone" class="text-end text-primary fw-bold"></td>
+
+                </tr>
+                <tr >
+                  <td class="text-center">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                  </td>
+                  <td>
+                    Current Time
+                  </td>
+                  <td id="currentTime" class="text-end text-primary fw-bold"></td>
+                  <tr>
+                    <td  class="text-center">
+                      <i class="fa-regular fa-sun"></i>
+                    </td>
+                    <td>
+                      Sunrise
+                    </td>
+                    <td id="sunrise" class="text-end text-primary fw-bold"></td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">
+                      <i class="fa-solid fa-cloud-sun"></i>
+                    </td>
+                    <td>
+                      Sunset
+                    </td>
+                    <td id="sunset" class="text-end text-primary fw-bold"></td>
+                  </tr>
+              
+                </table>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+        </div>
+      </div> 
+
+      <div id="modal3" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow">
+              <div class="modal-header bg-primary bg-gradient text-white">
+                <h5 class="modal-title">Read More</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
             <div class="modal-body">
               <table class="table table-striped">
                 <tr>
-      
                   <td class="text-center">
-                   <img id="flags" src="./libs/image/flag.png" alt="flag">
+                    <i class="fa-solid fa-info fa-xl"></i>
                   </td>
-      
-                  <td id="countryName">
-                    
+                  <td colspan="2">
+                    <p id="initialInfo"></p>
                   </td>
-      
-                  <td id="capitalCity" class="text-end text-primary fw-bold">
-                    
-                  </td>
-      
                 </tr>
                 <tr>
-                  <td class="text-center">
-                    <i class="fa-solid fa-globe fa-xl"></i>
+
+                  <td colspan="3" id="wiki">
+                  <!-- <a id="wiki" href="#" target="_blank"></a> -->
                   </td>
-                  <td>
-                    Continent
-                  </td>
-                  <td id="continent" class="text-end text-primary fw-bold"></td>
+
                 </tr>
-                <tr>
-                  
-    
-                  <td class="text-center">
-                      <i class="fa-solid fa-street-view fa-xl"></i>
-                  </td>
-        
-                  <td>
-                      Population
-                  </td>
-        
-                  <td id="population" class="text-end text-primary fw-bold">
-                      
-                  </td>
-        
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <i class="fa-solid fa-language"></i>
-                  </td>
-                  <td>
-                    Language
-                  </td>
-                  <td id="language" class="text-end text-primary fw-bold"></td>
-                </tr>
-               
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> 
-    
-    <div id="modal1" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
-      
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-            <h5 class="modal-title">Weather</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-striped">
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-cloud-moon-rain"></i>
-                </td>
-                <td>
-                  Temperature
-                </td>
-                <td id="temperature" class="text-end text-primary fw-bold"></td>
-              </tr>
-
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-temperature-half"></i>
-                </td>
-                <td>
-                  Feels Like
-                </td>
-                <td id="feelsLike" class="text-end text-primary fw-bold"></td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-wind"></i>
-                </td>
-                <td>
-                  Max Temperature
-                </td>
-                <td id="maxtemp" class="text-end text-primary fw-bold"></td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-temperature-half"></i>
-                </td>
-                <td>
-                  min Temperature
-                </td>
-                <td id="mintemp" class="text-end text-primary fw-bold"></td>
-              </tr>
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-icicles"></i>
-                </td>
-                <td>
-                  Weather forecast
-                </td>
-                <td id="forecast" class="text-end text-primary fw-bold"></td>
-              </tr>
-            
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> 
-
-    
-    <div id="timezone" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
-      
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-            <h5 class="modal-title">Timezone</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-striped">
-              <tr >
-                <td class="text-center">
-                  <i class="fa-solid fa-clock-rotate-left"></i>
-                </td>
-                <td>
-                  Timezone
-                </td>
-                <td id="timeZone" class="text-end text-primary fw-bold"></td>
-
-              </tr>
-              <tr >
-                <td class="text-center">
-                  <i class="fa-solid fa-clock-rotate-left"></i>
-                </td>
-                <td>
-                  Current Time
-                </td>
-                <td id="currentTime" class="text-end text-primary fw-bold"></td>
-                <tr>
-                  <td  class="text-center">
-                    <i class="fa-regular fa-sun"></i>
-                  </td>
-                  <td>
-                    Sunrise
-                  </td>
-                  <td id="sunrise" class="text-end text-primary fw-bold"></td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <i class="fa-solid fa-cloud-sun"></i>
-                  </td>
-                  <td>
-                    Sunset
-                  </td>
-                  <td id="sunset" class="text-end text-primary fw-bold"></td>
-                </tr>
-            
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> 
-
-    <div id="modal3" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
-      
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-            <h5 class="modal-title">Read More</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-striped">
-              <tr>
-                <td class="text-center">
-                  <i class="fa-solid fa-info fa-xl"></i>
-                </td>
-                <td colspan="2">
-                  <p id="initialInfo"></p>
-                </td>
-              </tr>
-              <tr>
-
-                <td colspan="3" id="wiki">
-                <!-- <a id="wiki" href="#" target="_blank"></a> -->
-                </td>
-
-              </tr>
-            
-            </table>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> 
-
-    <div id="modal4" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
-      
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-            <h5 class="modal-title">Current News</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-             
-            <div id="news" class="container">
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription" class="col 12"></p>
-                  <a id="newsUrl" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt" class=" col 4 fst-italic"></p>
-                </div>
-
-              </div>
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle1" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription1" class="col 12"></p>
-                  <a id="newsUrl1" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt1" class=" col 4 fst-italic"></p>
-                </div>
-              </div>
-
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle2" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription2" class="col 12"></p>
-                  <a id="newsUrl2" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt2" class=" col 4 fst-italic"></p>
-                </div>
-              </div>
-
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle3" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription3" class="col 12"></p>
-                  <a id="newsUrl3" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt3" class=" col 4 fst-italic"></p>
-                </div>
-
-              </div>
-
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle4" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription4" class="col 12"></p>
-                  <a id="newsUrl4" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt4" class=" col 4 fst-italic"></p>
-                </div>
-              </div>
-
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle5" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription5" class="col 12"></p>
-                  <a id="newsUrl5" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt5" class=" col 4 fst-italic"></p>
-                </div>
-              </div>
-
-              <div class="row g-2 justify-content-center">
-                <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                  <h6 id="newsTitle6" class="col 10 fw-bold"></h6>
-                  <p id="newsDescription6" class="col 12"></p>
-                  <a id="newsUrl6" href="#" target="_blank" class="col 8"></a>
-                  <p id="publishedAt6" class=" col 4 fst-italic"></p>
-                </div>
-              </div>
               
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div> 
+
+      <div id="modal4" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content shadow">
+            <div class="modal-header bg-primary bg-gradient text-white">
+              <h5 class="modal-title">Current News</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div id="news" class="container">
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription" class="col 12"></p>
+                    <a id="newsUrl" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt" class=" col 4 fst-italic"></p>
+                  </div>
+
+                </div>
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle1" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription1" class="col 12"></p>
+                    <a id="newsUrl1" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt1" class=" col 4 fst-italic"></p>
+                  </div>
+                </div>
+
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle2" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription2" class="col 12"></p>
+                    <a id="newsUrl2" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt2" class=" col 4 fst-italic"></p>
+                  </div>
+                </div>
+
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle3" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription3" class="col 12"></p>
+                    <a id="newsUrl3" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt3" class=" col 4 fst-italic"></p>
+                  </div>
+
+                </div>
+
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle4" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription4" class="col 12"></p>
+                    <a id="newsUrl4" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt4" class=" col 4 fst-italic"></p>
+                  </div>
+                </div>
+
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle5" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription5" class="col 12"></p>
+                    <a id="newsUrl5" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt5" class=" col 4 fst-italic"></p>
+                  </div>
+                </div>
+
+                <div class="row g-2 justify-content-center">
+                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+                    <h6 id="newsTitle6" class="col 10 fw-bold"></h6>
+                    <p id="newsDescription6" class="col 12"></p>
+                    <a id="newsUrl6" href="#" target="_blank" class="col 8"></a>
+                    <p id="publishedAt6" class=" col 4 fst-italic"></p>
+                  </div>
+                </div>
                 
+                  
+
+                </div>
+
 
               </div>
-
-
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
 
-    <div id="exchangeRate" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+      <div id="currencyConversion" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content shadow">
+            <div class="modal-header bg-primary bg-gradient text-white">
+              <h5 class="modal-title">Currency And Exchange Rate</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <h6>Local currency : <span id="localCurrency"></span></h6>
       
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow">
-          <div class="modal-header bg-primary bg-gradient text-white">
-            <h5 class="modal-title">Currency And Exchange Rate </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div id="lay">
+                <div class="mb-3 row">
+                  <label for="amount" class="form-label">Enter Amount</label>
+                  <div class="col-sm-7">
+                    <input type="number" class="form-control" id="amount" placeholder="Enter Amount To Convert">
+                  </div>
+                  <div class="col-sm-5">
+                    <button id="convertButton" type="submit" class="btn btn-primary">Convert</button>
+                  </div>
+                </div>
+      
+                <div>
+                  <p>Result (USD) : <span id="finalRate"></span></p>
+                  <p>Exchange Rate (USD) : = <span id="conversion"></span></p>
+                </div>
+              </div>
+            </div>
+      
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
           </div>
-          <div class="modal-body">
-             <h6>Local currency : <span id="localCurrency"></span></h6>
-
-            <div id="lay">
-            
-               <div class="mb-3 row">
-                 <label for="amount" class="form-label">Enter Amount</label>
-                 <div class="col-sm-7">
-                   <input type="number" class="form-control" id="amount" placeholder="Enter Amount To Convert">
-
-                 </div>
-                 <div class="col-sm-5">
-                  <button id="convertButton" type="submit" class="btn btn-primary">Convert</button>
+        </div>
+      </div>
+      
+                        
+        
+        
+                  
                     
-                 </div>
-             
-               <div>
-                <p>Result (USD) : <span id="finalRate"></span></p>
-                <p>Exchange Rate (USD) : = <span id="conversion"></span></p>
-               </div>
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div> 
-                      
-      
-      
-                 
-                  
-                   
-                  
-      
-      
+                    
+                    
+        
+        
       <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.min.js"></script>
@@ -398,5 +385,5 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.EasyButton/2.4.0/easy-button.min.js"></script>
 
       <script src="./libs/js/script.js"></script>
-</body>
-</html>
+  </body>
+  </html>

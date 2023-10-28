@@ -1,3 +1,22 @@
+let countryFlag;
+const flagContainer = document.getElementById('flags');
+const resultConvert = document.getElementById('conversion');
+const amount = document.getElementById('amount');
+const convert = document.getElementById('convertButton');
+const finalAmount = document.getElementById('finalRate');
+const icon1 = document.getElementById('icon');
+const icon2 = document.getElementById('iconforecast');
+const temp = document.getElementById('temperature');
+const feelsLike = document.getElementById('feelslike');
+const description = document.getElementById('weatherDescription');
+const dateForecast = document.getElementById('date');
+const maxTemp = document.getElementById('maxtemp');
+const minTemp = document.getElementById('mintemp');
+const description2 = document.getElementById('weatherDescriptionForecast');
+const countryContainer = document.getElementById('country');
+let userCurrency = "";
+let fetched = false;
+
 
 
 var streets = L.tileLayer(
@@ -23,103 +42,146 @@ var streets = L.tileLayer(
   var map = L.map("map", {
     layers: [streets]
   }).setView([54.5, -4], 6);
+
+airports = L.markerClusterGroup({
+    polygonOptions: {
+      fillColor: '#fff',
+      color: '#000',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.5
+    }}).addTo(map);
+
+    hotels = L.markerClusterGroup({
+        polygonOptions: {
+          fillColor: '#fff',
+          color: '#000',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.5
+        }}).addTo(map);
+
+    hospitals = L.markerClusterGroup({
+            polygonOptions: {
+              fillColor: '#fff',
+              color: '#000',
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.5
+            }}).addTo(map);
+        universities = L.markerClusterGroup({
+                    polygonOptions: {
+                    fillColor: '#fff',
+                    color: '#000',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.5
+                    }}).addTo(map);
+                    
+    
+    
+ overlays = {
+"Airports": airports,
+"Hotels": hotels,
+"Hospitals": hospitals,
+"Universities": universities,
+
+};
+
   
-  var layerControl = L.control.layers(basemaps).addTo(map);
+  var layerControl = L.control.layers(basemaps, overlays).addTo(map);
   let myLayer;
   myLayer = L.geoJSON().addTo(map);
   
-  L.easyButton("fa-info fa-lg", function (btn, map) {
+L.easyButton("fa-info fa-lg", function (btn, map) {
     $("#myModal").modal("show");
   }).addTo(map); 
 
-  L.easyButton("fa-solid fa-cloud-moon-rain", function (btn, map) {
+L.easyButton("fa-solid fa-cloud-moon-rain", function (btn, map) {
     $("#modal1").modal("show");
   }).addTo(map);
 
   L.easyButton("fa-solid fa-clock fa-xl", function (btn, map) {
-    $("#timezone").modal("show");
+    $("#myTimeModal").modal("show");
   }).addTo(map);
 
-  L.easyButton("fa-solid fa-newspaper", function (btn, map) {
+
+L.easyButton("fa-solid fa-newspaper", function (btn, map) {
     $("#modal4").modal("show");
     }).addTo(map);
 
-  L.easyButton("fa-solid fa-money-bill fa-xl", function (btn, map) {
-    $("#exchangeRate").modal("show");
+L.easyButton("fa-solid fa-money-bill fa-xl", function (btn, map) {
+    $("#currencyConversion").modal("show");
     }).addTo(map);
 
-    L.easyButton("fa-solid fa-globe fa-xl", function (btn, map) {
+L.easyButton("fa-solid fa-globe fa-xl", function (btn, map) {
         $("#modal3").modal("show");
       }).addTo(map);
-    
-  let testing = "";
-  map.locate({setView: true, maxZoom: 16});
+
+  
+map.locate({setView: true, maxZoom: 8});
 
 function onLocationFound(e) {
-    var radius = e.accuracy;
+     var radius = e.accuracy;
 
-    L.marker(e.latlng).addTo(map)
+     L.marker(e.latlng).addTo(map)
         
     L.circle(e.latlng, radius).addTo(map);
-    testing = e.latlng;
-}
+    
+ }
 
 
 
 map.on('locationfound', onLocationFound);
 
-function onLocationError(e) {
-    alert(e.message);
-}
 
-map.on('locationerror', onLocationError);
+let longitude;
+let latitude;
 
 
 
- /*var geojsonFeature = {
-  "type": "Feature",
-  "properties": {
-      "name": "Heathrow Airport",
-      "amenity": "Airport",
-      "popupContent": "This is Heathrow Airport!"
-  },
-  "geometry": {
-      "type": "Point",
-      "coordinates": [0.4494, 51.4697]
+if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        longitude = lng;
+        latitude = lat;
+
+        fetchOpenCage(lat, lng);
+        selectCountry();
+        
+        
+      },
+      function(error) {
+        if (error.code === error.PERMISSION_DENIED) {
+          console.log("User denied the geolocation request.");
+        } else {
+          console.error("Geolocation error: " + error.message);
+        }
+      }
+    );
+  } else {
+    console.log("Geolocation is not available in your browser.");
   }
-};
+ 
 
-L.geoJSON(geojsonFeature).addTo(map);*/
-
-//ajax request for the countries select box
-
-
-const countryContainer = document.getElementById('country');
-let userCurrency = "";
-
-$(document).ready(function () {
+function getCountries() {
+    if(fetched) return;
 
     $.ajax({
         type: "GET",
-        url: "libs/php/countries.php",
+        url: "libs/php/getCountryList.php",
         dataType: "json",
         success: function (result) {
 
-            let currencyCode = "";
-           // console.log(result.data[0].currencies);
-            //console.log(result)
-            //console.log(Object.keys(result.data[0].currencies));
-
-            countryContainer.innerHTML = result.data.map(country => { 
-                //console.log(country.currencies)
-                
-                return `<option data-lng="${country.latlng[0]}"  data-lat="${country.latlng[1]}"  data-currencies="${country.currencies ? Object.keys(country.currencies)[0]: ""}"  value="${country.cca2}">${country.name.common}</option>`
-            });
-
-            $("#country").html($("#country option").sort(function (a, b) {
-                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-            }));
-
+        
+            var options = '<option value=""></option>';
+            for (var i = 0; i < result.length; i++) {
+                options += '<option value="' + result[i][1] + '">' + result[i][0] + '</option>';
+            }
+            $('#countryContainer').html(options);
+            
 
 
 
@@ -129,7 +191,22 @@ $(document).ready(function () {
                 const latitude = target.options[target.selectedIndex].dataset.lat;
                 let countryCode = target.value;
                 let Countries = target.options[target.selectedIndex].innerHTML;
-                console.log(Countries);
+                let unspacedCountryName = Countries.split(" ").length > 1 ? Countries.split(" ").join("") : Countries;
+                userCurrency = target.options[target.selectedIndex].dataset.currencies;
+
+                document.getElementById('localCurrency').innerHTML = userCurrency;
+                getWeather(latitude, longitude);
+                getCountryInfo(countryCode);
+                getWiki(unspacedCountryName);
+                getTimeZone(latitude, longitude);
+                getNews(countryCode);
+                allMarkers(countryCode);
+                getConversion(userCurrency);
+                getBorder(countryCode);
+                getFlag(countryCode);
+               
+                
+                
                
             
             
@@ -137,24 +214,168 @@ $(document).ready(function () {
             map.setView([longitude, latitude], 12);
             L.marker([longitude, latitude]).addTo(map);
 
-            let countryFlag = `https://flagsapi.com/${target.value}/shiny/64.png`;
-            //console.log(countryFlag);
-            const flagContainer = document.getElementById('flags');
-            flagContainer.src = countryFlag;
+             
+        });
+  
 
-            const countryName = document.getElementById('countryName');
-            const capitalCity = document.getElementById('capitalCity');
-            const populationValue = document.getElementById('population');
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+}
+
+$(document).ready(function () {
+    
+
+    getCountries();
+
+    });
+
+function getBorder(countryCode) {
+    $.ajax({
+        
+        url: "libs/php/getB.php",
+     type: "GET",
+    data: {
+       countryCode: countryCode
+     },
+      success: function (data) {
+        
+
+// Clear existing layers if needed (optional)
+myLayer.clearLayers();
+
+// Add the new polygon data and set its style
+myLayer.addData(data).setStyle(polyStyle);
+
+// Fit the map to the bounds of the polygon
+const bounds = myLayer.getBounds();
+map.fitBounds(bounds);
+
+// Get the bounds of the polygon
+const north = bounds.getNorth();
+const south = bounds.getSouth();
+const east = bounds.getEast();
+
+// Polygon styling
+function polyStyle() {
+return {
+color: "#994444",
+weight: 7,
+opacity: 0.5,
+fillColor: "#fcb6b6",
+fillOpacity: 0.45
+};
+}
+},
+error: function (xhr, status, error) {
+console.error("Error:", error);
+console.log(xhr.responseText);
+}
+
+
+
+});
+}
+
+
+function getConversion(userCurrency) {
+    $.ajax({
+        url: "libs/php/conversion.php",
+        type: "GET",
+        
+        dataType: "json",
+        data: {
+            from_currency : userCurrency
+            
+        },
+        success: function (result) {
+            const exchangeRate = parseInt(amount.value)/result.data[`USD_${userCurrency}`] + "";
+            finalAmount.innerHTML = exchangeRate.substring(0, 5);
+           
             
            
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+           
+            const data = JSON.parse(jqXHR.responseText.replace("*", ""));
+            resultConvert.innerHTML =  data.data[`USD_${userCurrency}`] + "";
+           
+            
+            
+        }
+    });
 
+}
+
+    convert.addEventListener('click', function (e) {
+        
+    $.ajax({
+        url: "libs/php/conversion.php",
+        type: "GET",
+        
+        dataType: "json",
+        data: {
+            from_currency : userCurrency
+            
+        },
+        success: function (result) {
+            const exchangeRate = parseInt(amount.value)/result.data[`USD_${userCurrency}`] + "";
+            finalAmount.innerHTML = exchangeRate.substring(0, 5);
+           
+            
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            const data = JSON.parse(jqXHR.responseText.replace("*", ""));
+            const exchangeRate = parseInt(amount.value)/data.data[`USD_${userCurrency}`] + "";
+            finalAmount.innerHTML = exchangeRate.substring(0, 5);
+           
+            
+            
+        }
+    });
+});
+
+
+function getTimeZone(lat, lng) {
+    $.ajax({
+        url: "libs/php/timezone.php",
+        type: "POST",
+        
+        dataType: "json",
+        data: {
+          lat : lat,
+          lng : lng
+          
+
+        },
+        success: function (result) {
+            document.getElementById('timeZone').innerHTML = result.data.timezoneId;
+            document.getElementById('currentTime').innerHTML = result.data.time;
+            document.getElementById('sunrise').innerHTML = result.data.sunrise;
+            document.getElementById('sunset').innerHTML = result.data.sunset;
+    
+            
+           
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+}
+
+function getCountryInfo(countryCode) {
+    const populationValue = document.getElementById('population');
             $.ajax({
                 url: "libs/php/countryName.php",
                 type: "POST",
                 
                 dataType: "json",
                 data: {
-                    countryCode : target.value
+                    countryCode : countryCode
                 },
                 success: function (result) {
                    countryName.innerHTML = result.data[0].countryName;
@@ -162,204 +383,38 @@ $(document).ready(function () {
                    populationValue.innerHTML = result.data[0].population;
                    document.getElementById('language').innerHTML = result.data[0].languages;
                    document.getElementById('continent').innerHTML = result.data[0].continentName;
+                   document.getElementById('localCurrency').innerHTML = result.data[0].currencyCode;
         
-                   console.log(result);
+                   
                    
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
                 }
             });
+            }
 
-            
-
-            
-            $.ajax({
-                url: "libs/php/openweather.php",
-                type: "POST",
-                
-                dataType: "json",
-                data: {
-                    q : target.options[target.selectedIndex].innerHTML
-                },
-                success: function (result) {
-                    
-                    document.getElementById('temperature').innerHTML = result.data.main.temp;
-                    document.getElementById('feelsLike').innerHTML = result.data.main.feels_like;
-                    document.getElementById('maxtemp').innerHTML = result.data.main.temp_max;
-                    document.getElementById('mintemp').innerHTML = result.data.main.temp_min;
-                    document.getElementById('forecast').innerHTML = result.data.weather[0].description;
-
-                   console.log(result);
-                   //console.log(target.options[target.selectedIndex].innerHTML);
-                   
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR);
-                }
-            });
-
+function getWiki(countryName) {   
             $.ajax({
                 url: "libs/php/wiki.php",
                 type: "POST",
                 
                 dataType: "json",
                 data: {
-                  q : target.options[target.selectedIndex].innerHTML
+                  q : countryName
                 },
                 success: function (result) {
                     document.getElementById('initialInfo').innerHTML = result.data[0].summary;
                     wiki.innerHTML = `<a href="https://${result.data[0].wikipediaUrl}" target="_blank">Click Here To Read More</a>`
-                   console.log(result);
                    
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
                 }
             });
+        }
 
-            // Display border
-         function getBorder(countryCode) {
-            $.ajax({
-                
-                url: "libs/php/getB.php",
-             type: "GET",
-            data: {
-               countryCode: countryCode
-             },
-              success: function (data) {
-                 console.log("Received data:", data);
-        //  // Parse the received JSON data
-        //        const polygon = JSON.parse(data);
-        
-        //        console.log(polygon);
-        //  // Clear existing layers if needed (optional)
-        //        myLayer.clearLayers();
-  
-        // // Add the new polygon data and set its style
-        //        myLayer.addData(polygon).setStyle(polyStyle);
-  
-        //  // Fit the map to the bounds of the polygon
-        //        const bounds = myLayer.getBounds();
-        //        map.fitBounds(bounds);
-
-        
-      // Clear existing layers if needed (optional)
-      myLayer.clearLayers();
-
-      // Add the new polygon data and set its style
-      myLayer.addData(data).setStyle(polyStyle);
-
-      // Fit the map to the bounds of the polygon
-      const bounds = myLayer.getBounds();
-      map.fitBounds(bounds);
-
-      // Optionally, you can extract the bounding coordinates
-      const north = bounds.getNorth();
-      const south = bounds.getSouth();
-      const east = bounds.getEast();
-
-       // Polygon styling
-       function polyStyle() {
-        return {
-        color: "#994444",
-        weight: 9,
-        opacity: 1.0,
-        fillColor: "#fcb6b6",
-        fillOpacity: 0.45
-        };
-    }
-       },
-       error: function (xhr, status, error) {
-        console.error("Error:", error);
-        console.log(xhr.responseText);
-    }
-    
-
-       
-     });
-    }
-
-        getBorder(countryCode);
-
-     
-    
-
-            
-
-    
-  
-
-            $.ajax({
-                url: "libs/php/timezone.php",
-                type: "POST",
-                
-                dataType: "json",
-                data: {
-                  lat : longitude,
-                  lng : latitude
-                  
-
-                },
-                success: function (result) {
-                    document.getElementById('timeZone').innerHTML = result.data.timezoneId;
-                    document.getElementById('currentTime').innerHTML = result.data.time;
-                    document.getElementById('sunrise').innerHTML = result.data.sunrise;
-                    document.getElementById('sunset').innerHTML = result.data.sunset;
-			
-                    
-                   //console.log(result);
-                   
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR);
-                }
-            });
-
-            
-            
-
-            $.ajax({
-                url: "libs/php/opencage.php",
-                type: "GET",
-                
-                dataType: "json",
-                data: {
-                    q : target.options[target.selectedIndex].innerHTML
-                },
-                success: function (result) {
-                    
-                    console.log(result);
-                   
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR);
-                }
-            });
-
-            userCurrency = target.options[target.selectedIndex].dataset.currencies;
-            document.getElementById('localCurrency').innerHTML = userCurrency;
-
-            $.ajax({
-                url: "libs/php/conversion.php",
-                type: "GET",
-                
-                dataType: "json",
-                data: {
-                    
-                    from_currency : userCurrency
-                    
-                },
-                success: function (result) {
-                    document.getElementById('conversion').innerHTML = result.data[`USD_${userCurrency}`];
-                    console.log(result);
-                   
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(jqXHR);
-                }
-            });
-
+        function getNews(countryCode) {
             $.ajax({
                 url: "libs/php/News.php",
                 type: "GET",
@@ -407,65 +462,295 @@ $(document).ready(function () {
                     document.getElementById('newsUrl6').innerHTML = `<a href="${result.data.articles[6].url}" target="_blank">Click Here To Read More</a>`;
 
 
-                    console.log(result);
+                    
                    
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
                 }
             });
-
-            
-        });
-
-
-
-
-            
-
-           //console.log(result);
-
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR);
         }
-    });
 
-    
-
-    
-
-
-
-});
-
-const amount = document.getElementById('amount');
-const convert = document.getElementById('convertButton');
-const finalAmount = document.getElementById('finalRate');
-convert.addEventListener('click', function (e) {
+function getWeather(lat, lng) {
     $.ajax({
-        url: "libs/php/conversion.php",
+        url: "libs/php/getWeather.php",
         type: "GET",
         
         dataType: "json",
-        data: {
-            from_currency : userCurrency
-            
-        },
+         data: {
+             lat : lat,
+             lng : lng
+         },
         success: function (result) {
-            const exchangeRate = parseInt(amount.value)/result.data[`USD_${userCurrency}`] + "";
-            finalAmount.innerHTML = exchangeRate.substring(0, 5);
-            console.log(result);
+            icon1.innerHTML = `<img src="${result.current.condition.icon}" alt="weather icon">`;
+            temp.innerHTML = result.current.temp_c + "°C";
+            feelsLike.innerHTML = result.current.feelslike_c + "°C";
+            description.innerHTML = result.current.condition.text;
+            icon2.innerHTML = `<img src="${result.forecast.forecastday[0].day.condition.icon}" alt="weather icon">`;
+            dateForecast.innerHTML = result.forecast.forecastday[0].date;
+            maxTemp.innerHTML = result.forecast.forecastday[0].day.maxtemp_c + "°C";
+            minTemp.innerHTML = result.forecast.forecastday[0].day.mintemp_c + "°C";
+            description2.innerHTML = result.forecast.forecastday[0].day.condition.text;
+           
+           
            
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR);
         }
     });
-});
 
 
+  }
+function getFlag(countryCode) {
+    $.ajax({
+        url: "libs/php/countryFlag.php",
+        type: "GET",
+        
+        dataType: "json",
+        data: {
+            countryCode : countryCode
+        },
+        success: function (result) {
+            countryFlag = result;
+            flagContainer.src = countryFlag;
+
+            
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            countryFlag = jqXHR.responseText;
+            flagContainer.src = countryFlag;
+
+        }
+    });
+}
+
+  function allMarkers(countryCode) {
+    $.ajax({
+        url: "libs/php/markers.php",
+        type: "POST",
+        
+        dataType: "json",
+        data: {
+            q : "airport",
+            country : countryCode
+        },
+        success: function (result) {
+
+            var airportIcon = L.icon({
+                iconUrl: 'libs/image/airport.png',
+                shadowUrl: 'libs/image/airport_shadow.png',
+            
+                iconSize:     [18, 40], // size of the icon
+                shadowSize:   [8, 24], // size of the shadow
+                iconAnchor:   [11, 64], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 32],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+            for (let i = 0; i < result.data.geonames.length; i++) {
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: airportIcon}).addTo(map);
+                marker.bindPopup(`<b> Airport <br> ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
+            }
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+
+    $.ajax({
+        url: "libs/php/markers.php",
+        type: "POST",
+        
+        dataType: "json",
+        data: {
+            q : "hospital",
+            country : countryCode
+        },
+        success: function (result) {
+
+            var hospitalIcon = L.icon({
+                iconUrl: 'libs/image/hospital.png',
+                shadowUrl: 'libs/image/hospital_shadow.png',
+            
+                iconSize:     [28, 40], // size of the icon
+                shadowSize:   [10, 34], // size of the shadow
+                iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+            for (let i = 0; i < result.data.geonames.length; i++) {
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hospitalIcon}).addTo(map);
+                marker.bindPopup(`<b> Hospital <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hospitals);
+            }
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+
+    $.ajax({
+        url: "libs/php/markers.php",
+        type: "POST",
+        
+        dataType: "json",
+        data: {
+            q : "university",
+            country : countryCode
+        },
+        success: function (result) {
+
+            var universityIcon = L.icon({
+                iconUrl: 'libs/image/university.png',
+                shadowUrl: 'libs/image/university_shadow.png',
+            
+                iconSize:     [18, 40], // size of the icon
+                shadowSize:   [8, 24], // size of the shadow
+                iconAnchor:   [11, 64], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 32],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+            for (let i = 0; i < result.data.geonames.length; i++) {
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: universityIcon}).addTo(map);
+                marker.bindPopup(`<b> University <br> ${result.data.geonames[i].asciiName}</b>`).addTo(universities);
+            }
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+
+    $.ajax({
+        url: "libs/php/markers.php",
+        type: "POST",
+        
+        dataType: "json",
+        data: {
+            q : "hotel",
+            country : countryCode
+        },
+        success: function (result) {
+
+            var hotelIcon = L.icon({
+                iconUrl: 'libs/image/hotel.png',
+                shadowUrl: 'libs/image/hotel_shadow.png',
+            
+                iconSize:     [18, 40], // size of the icon
+                shadowSize:   [8, 24], // size of the shadow
+                iconAnchor:   [11, 64], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 32],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+            for (let i = 0; i < result.data.geonames.length; i++) {
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hotelIcon}).addTo(map);
+                marker.bindPopup(` <b> Hotel <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hotels);
+            }
+           
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR);
+        }
+    });
+}
+
+function selectCountry(){
+    $.ajax({
+        type: "GET",
+        url: "libs/php/countries.php",
+        dataType: "json",
+        success: function (result) {
+            
+            countryContainer.innerHTML = result.data.map(country => {
+                
     
+                return `<option data-lng="${country.latlng[0]}" data-lat="${country.latlng[1]}" data-currencies="${country.currencies ? Object.keys(country.currencies)[0] : ""}" value="${country.cca2}">${country.name.common}</option>`;
+            }).join(""); // Added the join() function to concatenate the option elements properly
+    
+            $("#country").html($("#country option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            }));
+    
+            // Automatically select the country of location
+            let userCountry = ""; // Set the user's country based on the location
+            $("#country option").each(function () {
+                if ($(this).text() === userCountry) {
+                    $(this).prop('selected', true);
+                    return false; // Break out of the loop once the country is selected
+                    
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+    
+}
+
+  function fetchOpenCage(lat, lng){
+    $.ajax({
+        url: "libs/php/opencage.php",
+        type: "GET",
+        
+        dataType: "json",
+        data: {
+            lat : lat,
+            lng : lng
+        },
+        
+        success: function (result) {
+
+            let countryCode = result.data.results[0].components.country_code.toUpperCase();
+            userCurrency = result.data.results[0].annotations.currency.iso_code;
+            let countryName = result.data.results[0].components.country;
+            let unspacedCountryName = countryName.split(" ").length > 1 ? countryName.split(" ").join("") : countryName;
+            
+            
+            getWeather(lat, lng);
+            getCountryInfo(countryCode);
+            allMarkers(countryCode);
+            getWiki(unspacedCountryName);
+            getTimeZone(lat, lng);
+            getNews(countryCode);
+            getBorder(countryCode);
+            getConversion(userCurrency);
+            getCountries();
+            getFlag(countryCode);
+            
+            $.ajax({
+                type: "GET",
+                url: "libs/php/getCountryList.php",
+                dataType: "json",
+                success: function (result) {
+        
+                    let currencyCode = "";
+                   
+                    var options = '<option value=""></option>';
+                    for (var i = 0; i < result.length; i++) {
+                        options += '<option value="' + result[i][1] + '">' + result[i][0] + '</option>';
+                    }
+                    $('#countryContainer').html(options);
+                    
+            //     // automatically select the country of location
+            setTimeout(() => {
+                for(let i = 0; i < countryContainer.length; i++) {
+                    if(countryContainer[i].innerHTML === countryName) {
+                                 countryContainer.selectedIndex = i;
+                                 break;
+                             }
+        
+                   
+                    }
+            }, 1000);
+            
+        }, error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+           }});
+        }
+    });
+}
 
 
   
