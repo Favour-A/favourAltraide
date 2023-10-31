@@ -19,6 +19,7 @@ let fetched = false;
 
 
 
+
 var streets = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
     {
@@ -548,7 +549,7 @@ function getFlag(countryCode) {
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
-                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: airportIcon}).addTo(map);
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: airportIcon}).addTo(airports);
                 marker.bindPopup(`<b> Airport <br> ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
             }
            
@@ -580,7 +581,7 @@ function getFlag(countryCode) {
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
-                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hospitalIcon}).addTo(map);
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hospitalIcon}).addTo(hospitals);
                 marker.bindPopup(`<b> Hospital <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hospitals);
             }
            
@@ -612,7 +613,7 @@ function getFlag(countryCode) {
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
-                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: universityIcon}).addTo(map);
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: universityIcon}).addTo(universities);
                 marker.bindPopup(`<b> University <br> ${result.data.geonames[i].asciiName}</b>`).addTo(universities);
             }
            
@@ -644,16 +645,21 @@ function getFlag(countryCode) {
                 popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
-                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hotelIcon}).addTo(map);
+                const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hotelIcon}).addTo(hotels);
                 marker.bindPopup(` <b> Hotel <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hotels);
             }
            
         },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR);
-        }
+       
+
     });
+
 }
+
+map.addLayer(airports);
+    map.addLayer(hospitals);
+    map.addLayer(universities);
+    map.addLayer(hotels);
 
 function selectCountry(){
     $.ajax({
