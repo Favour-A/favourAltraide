@@ -3,7 +3,12 @@
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>My Gazetteer</title>
+      <title>Gazetteer</title>
+
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+      <link rel="manifest" href="/site.webmanifest">
 
       <link rel="stylesheet" href="./libs/css/leaflet1.css">
       <link rel="stylesheet" href="./libs/css/toastify.css">
@@ -13,7 +18,6 @@
       <link rel="stylesheet" href="./libs/css/bootstrap.css">
       <link rel="stylesheet" href="./libs/css/easybuttons.css">
       <link rel="stylesheet" href="./libs/css/style.css">
-
 
   </head>
   <body>
@@ -33,8 +37,8 @@
         
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content shadow">
-              <div class="modal-header bg-primary bg-gradient text-white">
-                <h5 class="modal-title">Overview</h5>
+              <div class="modal-header bg-success bg-gradient text-white">
+                <h5 class="modal-title"><i class="fa-solid fa-circle-info fa-xl me-2"></i>At a glance</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -88,6 +92,62 @@
                     </td>
                     <td id="language" class="text-end text-primary fw-bold"></td>
                   </tr>
+                  <tr>
+
+                    <td class="text-center">
+                      <i class="fa-solid fa-coins fa-xl"></i>
+                    </td>
+        
+                    <td>
+                      Currency
+                    </td>
+        
+                    <td id="currency" class="text-end text-primary fw-bold">
+                    </td>
+        
+                  </tr>
+                  <tr>
+
+                    <td class="text-center">
+                      <i class="fa-solid fa-equals fa-xl"></i>
+                    </td>
+        
+                    <td class="text-nowrap">
+                      ISO alpha 2
+                    </td>
+        
+                    <td id="isoAlpha2" class="text-end text-primary fw-bold">
+                    </td>
+        
+                  </tr>
+                  <tr>
+        
+                    <td class="text-center">
+                      <i class="fa-solid fa-bars fa-xl"></i>
+                    </td>
+        
+                    <td class="text-nowrap">
+                      ISO alpha 3
+                    </td>
+        
+                    <td id="isoAlpha3" class="text-end text-primary fw-bold">
+                    </td>
+        
+                  </tr>
+                  <tr>
+
+                    <td class="text-center">
+                      <i class="fa-solid fa-ruler-combined fa-xl"></i>
+                    </td>
+        
+                    <td class="text-nowrap">
+                      Area (km<sup>2</sup>)
+                    </td>
+        
+                    <td id="areaInSqKm" class="text-end text-primary fw-bold">
+                    </td>
+        
+                  </tr>
                 
                 </table>
               </div>
@@ -98,7 +158,7 @@
           </div>
         </div> 
       
-        <div id="modal1" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+        <!-- <div id="modal1" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
           
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content shadow">
@@ -113,12 +173,12 @@
                     
                       <div class="col-sm-6" id="icon">
                       </div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6">temp <br> <span id="temperature"></span></div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6">feels like <br> <span id="feelslike"></span></div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6"id="temperature"></div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6" id="feelslike"></div>
                     </div>
                     <div class="row">
                         <div class="col-sm-8 ">
-                          <div class="fw-bold fs-6">Description: <span id="weatherDescription"></span></div>
+                          <div class="fw-bold fs-6"id="weatherDescription"></div>
                         </div>
                     
                   </div>
@@ -128,14 +188,14 @@
                       <div class="row  bg-dark-subtle">
                       
                         <div class="col-sm-6" id="iconforecast"></div>
-                        <div class="col-sm-4 fw-light fs-6">date: <span id="date"></span></div>
+                        <div class="col-sm-4 fw-light fs-6" id="date"></div>
                       </div>
                       <div class="row">
-                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="maxtemp">Maximum Temperature: <br> <span id="maxtemp"></span></div>
-                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="mintemp">Minimum Temperature: <br> <span id="mintemp"></span></div>
+                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="maxtemp" id="maxtemp"></div>
+                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="mintemp" id="mintemp"></div>
                       <div class="row">
                           <div class="col-sm-8">
-                            <div class=" bg-danger-subtle fw-bold fs-6">Description: <span id="weatherDescriptionForecast"></span></div>
+                            <div class=" bg-danger-subtle fw-bold fs-6"id="weatherDescriptionForecast"></div>
                           </div>
                       
                       </div>
@@ -143,71 +203,172 @@
                   
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
-                </div>
+                  <p class="fs-6 fw-light">Last updated <span id="lastUpdated"></span>. Powered by <a href="https://www.weatherapi.com/" target="_blank" title="Free Weather API">WeatherAPI.com</a></p>                </div>
               </div>
             </div>
         </div>
       </div>
-      </div>
+      </div> -->
 
+      <div id="weatherModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="weatherModalLabel" aria-hidden="true">
+    
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          
+          <div class="modal-content shadow">      
+              
+            <div class="modal-header bg-primary bg-gradient text-white">
       
-        <div id="myTimeModal" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+              <h5 class="modal-title" id="weatherModalLabel"></h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      
+            </div>
+      
+            <div class="modal-body">
+              
+              <div id="pre-load"></div>
+      
+              <div class="row">
+      
+                <div class="col border m-2">
+      
+                  <p class="fw-bold fs-5 mt-1">TODAY</p>
+                  
+                  <div class="row">
+                    
+                    <div class="col text-center m-3">
+                      
+                      <p id="todayConditions" class="fw-bold fs-6"></p>
+                        
+                    </div>
+                    
+                    <div class="col text-center">
+                      
+                      <img id="todayIcon" class="img-fluid mt-0" src="" alt="" title="">
+                        
+                    </div>              
+      
+                    <div class="col text-center">
+                      
+                      <p class="fw-bold fs-4 mb-0"><span id="todayMaxTemp">3</span><sup>o</sup><span class="tempMetric">c</span></p>
+                      <p class="fs-5 mt-0 text-secondary"><span id="todayMinTemp">-2</span><sup>o</sup><span class="tempMetric">c</span></p>
+                        
+                    </div>              
+                    
+                  </div>
+      
+                </div>   
+      
+              </div>
+      
+              <div class="row">
+      
+                <div class="col border m-2">
+                  
+                  <div class="row">
+                    
+                    <div class="col text-center">
+      
+                      <p id="day1Date" class="fw-bold fs-6 mt-3"></p>
+                      
+                    </div>
+                    
+                  </div>
+                  
+                  <div class="row">
+                    
+                    <div class="col text-center">
+                      
+                      <p class="fw-bold fs-4 mb-0"><span id="day1MaxTemp"></span><sup>o</sup>c</p>
+                      <p class="fs-5 mt-0 text-secondary"><span id="day1MinTemp"></span><sup>o</sup>c</p>
+                      
+                    </div>
+                    
+                    <div class="col text-center">
+                      
+                      <img id="day1Icon" src="" alt="" title="">
+                      
+                    </div>    
+                    
+                  </div>
+                  
+                </div>   
+      
+                <div class="col border m-2">
+      
+                  <div class="row">
+                    
+                    <div class="col text-center">
+      
+                      <p id="day2Date" class="fw-bold fs-6 mt-3">Fri 16th</p>
+                      
+                    </div>
+                    
+                  </div>
+                  
+                  <div class="row">
+                    
+                    <div class="col text-center">
+                      
+                      <p class="fw-bold fs-4 mb-0"><span id="day2MaxTemp"></span><sup>o</sup>c</p>
+                      <p class="fs-5 mt-0 text-secondary"><span id="day2MinTemp"></span><sup>o</sup>c</p>
+                      
+                    </div>
+                    
+                    <div class="col text-center">
+                      
+                      <img id="day2Icon" src="" alt="" title="">
+                      
+                    </div>    
+                    
+                  </div>
+                  
+                </div>         
+      
+             </div>   
+          
+            </div>
+            
+            <div class="modal-footer">
+              <p class="fs-6 fw-light">Last updated <span id="lastUpdated"></span>. Powered by <a href="https://www.weatherapi.com/" target="_blank" title="Free Weather API">WeatherAPI.com</a></p>
+            </div>
+      
+          </div>
+            
+        </div>
         
+      </div>
+      <div id="Public-holidays" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
+          
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content shadow">
               <div class="modal-header bg-primary bg-gradient text-white">
-                <h5 class="modal-title">Timezone</h5>
+                <h5 class="modal-title">Public Holidays</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-            <div class="modal-body">
-              <table class="table table-striped">
-                <tr >
-                  <td class="text-center">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                  </td>
-                  <td>
-                    Timezone
-                  </td>
-                  <td id="timeZone" class="text-end text-primary fw-bold"></td>
-
-                </tr>
-                <tr >
-                  <td class="text-center">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                  </td>
-                  <td>
-                    Current Time
-                  </td>
-                  <td id="currentTime" class="text-end text-primary fw-bold"></td>
-                  <tr>
-                    <td  class="text-center">
-                      <i class="fa-regular fa-sun"></i>
-                    </td>
-                    <td>
-                      Sunrise
-                    </td>
-                    <td id="sunrise" class="text-end text-primary fw-bold"></td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">
-                      <i class="fa-solid fa-cloud-sun"></i>
-                    </td>
-                    <td>
-                      Sunset
-                    </td>
-                    <td id="sunset" class="text-end text-primary fw-bold"></td>
-                  </tr>
-              
-                </table>
+              <div class="modal-body">
+                <div class="container text-center">
+                  <h6 class="fs-4 fw-bolder">Upcoming Public Holidays</h6>
+                    <div class="row  bg-dark-subtle">
+                    
+                      <div class="col-sm-6" id="holidayName"></div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6"id="holidayDate"></div>
+                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6" id="holidayType"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8 ">
+                          <div class="fw-bold fs-6"id="holidayDescription"></div>
+                        </div>
+                    
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary btn-sm" data-bs-dismiss="modal">Close</button>
               </div>
+            </div>
           </div>
-        </div>
-      </div> 
-
+      </div>
+       
       <div id="modal3" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
         
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -248,7 +409,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content shadow">
             <div class="modal-header bg-primary bg-gradient text-white">
-              <h5 class="modal-title">Current News</h5>
+              <h5 class="modal-title">BREAKING NEWS</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -257,8 +418,8 @@
                 <div class="row g-2 justify-content-center">
                   <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
                     <h6 id="newsTitle" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription" class="col 12"></p>
-                    <a id="newsUrl" href="#" target="_blank" class="col 8"></a>
+                    <p id="newsDescription" class="col 12"> <a id="newsUrl" href="#" target="_blank" ></a></p>
+                    
                     <p id="publishedAt" class=" col 4 fst-italic"></p>
                   </div>
 
@@ -374,7 +535,7 @@
                     
                     
         
-      <script src="https://kit.fontawesome.com/2680db22e7.js" crossorigin="anonymous"></script>
+      <script src="./libs/js/fontawesomekit.js"></script>
       <script src="./libs/js/leaflet_1.8.0_leaflet.js"></script>
       <script src="./libs/js/jquery_3.6.2_jquery.min.js"></script>
       <script src="./libs/js/toastify-js_1.6.1_toastify.min.js"></script>
@@ -382,6 +543,9 @@
       <script src="./libs/js/leaflet3.extra-markers.js"></script>
       <script src="./libs/js/bootstrap.min.js"></script>
       <script src="./libs/js/easy-button.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+
       <script src="./libs/js/script.js"></script>
   </body>
   </html>

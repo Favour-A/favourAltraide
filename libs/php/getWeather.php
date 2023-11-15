@@ -4,8 +4,8 @@
 $curl = curl_init();
 
 // Set the required URL and other cURL options
-$url = "http://api.weatherapi.com/v1/forecast.json?key=03a38c7145004526888115159232610&q=" . $_REQUEST['lat'] . ",". $_REQUEST['lng'] .
- "&days=1&aqi=no&alerts=no";
+$url = "http://api.weatherapi.com/v1/forecast.json?key=03a38c7145004526888115159232610&q=" . $_REQUEST['lat']. $_REQUEST['lng'] .
+ "&days=4&aqi=no&alerts=no";
 curl_setopt_array($curl, array(
     CURLOPT_URL => $url,
     CURLOPT_RETURNTRANSFER => true,

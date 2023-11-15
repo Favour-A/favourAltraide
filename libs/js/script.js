@@ -1,20 +1,33 @@
+
+
 let countryFlag;
 const flagContainer = document.getElementById('flags');
 const resultConvert = document.getElementById('conversion');
 const amount = document.getElementById('amount');
 const convert = document.getElementById('convertButton');
 const finalAmount = document.getElementById('finalRate');
-const icon1 = document.getElementById('icon');
-const icon2 = document.getElementById('iconforecast');
-const temp = document.getElementById('temperature');
-const feelsLike = document.getElementById('feelslike');
-const description = document.getElementById('weatherDescription');
+const icon1 = document.getElementById('todayIcon');
+const icon2 = document.getElementById('day1Icon');
+const maxTemp0 = document.getElementById('todayMaxTemp');
+const minTemp0 = document.getElementById('todayMinTemp');
+const maxTemp1 = document.getElementById('day1MaxTemp');
+const minTemp1 = document.getElementById('day1MinTemp');
+const maxTemp2 = document.getElementById('day2MaxTemp');
+const minTemp2 = document.getElementById('day2MinTemp');
+const day1Date = document.getElementById('day1Date');
+const day2Date = document.getElementById('day2Date');
+const icon3 = document.getElementById('day2Icon');
+const modalLabel = document.getElementById('weatherModalLabel');
+const lastUpdated = document.getElementById('lastUpdated');
+// const feelsLike = document.getElementById('feelslike');
+const description = document.getElementById('todayConditions');
 const dateForecast = document.getElementById('date');
 const maxTemp = document.getElementById('maxtemp');
 const minTemp = document.getElementById('mintemp');
 const description2 = document.getElementById('weatherDescriptionForecast');
 const countryContainer = document.getElementById('country');
 let userCurrency = "";
+let capitalCity;
 let fetched = false;
 
 
@@ -99,11 +112,11 @@ L.easyButton("fa-info fa-lg", function (btn, map) {
   }).addTo(map); 
 
 L.easyButton("fa-solid fa-cloud-moon-rain", function (btn, map) {
-    $("#modal1").modal("show");
+    $("#weatherModal").modal("show");
   }).addTo(map);
 
-  L.easyButton("fa-solid fa-clock fa-xl", function (btn, map) {
-    $("#myTimeModal").modal("show");
+L.easyButton("fa-solid fa-calendar-days", function (btn, map) {
+    $("#Public-holidays").modal("show");
   }).addTo(map);
 
 
@@ -124,8 +137,6 @@ map.locate({setView: true, maxZoom: 8});
 
 function onLocationFound(e) {
      var radius = e.accuracy;
-
-     L.marker(e.latlng).addTo(map)
         
     L.circle(e.latlng, radius).addTo(map);
     
@@ -138,6 +149,14 @@ map.on('locationfound', onLocationFound);
 
 let longitude;
 let latitude;
+
+var airportsIcon = L.ExtraMarkers.icon({
+    prefix: 'fa',
+    icon: 'fa-plane',
+    iconColor: 'black',
+    markerColor: 'white',
+    shape: 'square'
+  });
 
 
 
@@ -194,17 +213,18 @@ function getCountries() {
                 let Countries = target.options[target.selectedIndex].innerHTML;
                 let unspacedCountryName = Countries.split(" ").length > 1 ? Countries.split(" ").join("") : Countries;
                 userCurrency = target.options[target.selectedIndex].dataset.currencies;
+                
 
                 document.getElementById('localCurrency').innerHTML = userCurrency;
                 getWeather(latitude, longitude);
                 getCountryInfo(countryCode);
                 getWiki(unspacedCountryName);
-                getTimeZone(latitude, longitude);
                 getNews(countryCode);
                 allMarkers(countryCode);
-                getConversion(userCurrency);
+                //getConversion(userCurrency);
                 getBorder(countryCode);
                 getFlag(countryCode);
+                getHolidays(countryCode);
                
                 
                 
@@ -231,7 +251,68 @@ $(document).ready(function () {
 
     getCountries();
 
-    });
+             
+
+});
+
+function getHolidays(countryCode) {
+$.ajax({
+    url: "libs/php/holidays.php",
+    type: "GET",
+    dataType: "json",
+
+    data: {
+        country : countryCode
+    },
+    success: function (result) {
+    var holidays = JSON.parse(result);
+      console.log(holidays);
+
+                
+                 holidays.forEach(function(holiday) {
+                     $('#holidayName').append('<div>' + holiday.name + '</div>');
+                     $('#holidayDate').append('<div>' + holiday.date + '</div>');
+                     $('#holidayType').append('<div>' + holiday.type + '</div>');
+                     $('#holidayDescription').append('<div>' + holiday.description + '</div>');
+                 });
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+    }
+});
+}
+
+    // $.ajax({
+    //     url: "libs/php/getB.php",
+    //     type: 'POST',
+    //     dataType: 'json',
+    //     data: {
+    //       countryCode: countryCode
+    //     },
+    //     success: function (result) {
+                
+    //       if (result.status.code == 200) {
+            
+    //         result.data.forEach(function(item) {
+              
+    //           L.marker([item.lat, item.lng], {icon: airportsIcon})
+    //             .bindTooltip(item.name, {direction: 'top', sticky: true})
+    //             .addTo(airports);
+              
+    //         })
+           
+    //       } else {
+    
+    //         showToast("Error retrieving airport data", 4000, false);
+    
+    //       } 
+    
+    //     },
+    //     error: function (jqXHR, textStatus, errorThrown) {
+    //       showToast("Airports - server error", 4000, false);
+    //     }
+    //   });      
+         
 
 function getBorder(countryCode) {
     $.ajax({
@@ -340,33 +421,6 @@ function getConversion(userCurrency) {
 });
 
 
-function getTimeZone(lat, lng) {
-    $.ajax({
-        url: "libs/php/timezone.php",
-        type: "POST",
-        
-        dataType: "json",
-        data: {
-          lat : lat,
-          lng : lng
-          
-
-        },
-        success: function (result) {
-            document.getElementById('timeZone').innerHTML = result.data.timezoneId;
-            document.getElementById('currentTime').innerHTML = result.data.time;
-            document.getElementById('sunrise').innerHTML = result.data.sunrise;
-            document.getElementById('sunset').innerHTML = result.data.sunset;
-    
-            
-           
-           
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR);
-        }
-    });
-}
 
 function getCountryInfo(countryCode) {
     const populationValue = document.getElementById('population');
@@ -379,15 +433,26 @@ function getCountryInfo(countryCode) {
                     countryCode : countryCode
                 },
                 success: function (result) {
+                    const number = result.data[0].population;
+                    const formatter = new Intl.NumberFormat('en-US', {
+                       style: 'decimal',
+                       minimumFractionDigits: 0,
+                       maximumFractionDigits: 0
+             });
+                    const formattedNumber = formatter.format(number);
+                    const capitalCity = result.data[0].capital;
+
                    countryName.innerHTML = result.data[0].countryName;
-                   capitalCity.innerHTML = result.data[0].capital;
-                   populationValue.innerHTML = result.data[0].population;
+                   capitalCity.innerHTML = capitalCity;
+                   populationValue.innerHTML = formattedNumber;
                    document.getElementById('language').innerHTML = result.data[0].languages;
                    document.getElementById('continent').innerHTML = result.data[0].continentName;
                    document.getElementById('localCurrency').innerHTML = result.data[0].currencyCode;
+                   document.getElementById('currency').innerHTML = result.data[0].currencyCode;
+                   document.getElementById('areaInSqKm').innerHTML = result.data[0].areaInSqKm;
+                   document.getElementById('isoAlpha2').innerHTML = result.data[0].countryCode;
+                   document.getElementById('isoAlpha3').innerHTML = result.data[0].isoAlpha3;
         
-                   
-                   
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
@@ -427,6 +492,8 @@ function getWiki(countryName) {
                     
                 },
                 success: function (result) {
+                   
+
                     document.getElementById('newsTitle').innerHTML = result.data.articles[0].title;
                     document.getElementById('newsDescription').innerHTML = result.data.articles[0].description;
                     document.getElementById('newsUrl').innerHTML = `<a href="${result.data.articles[0].url}" target="_blank">Click Here To Read More</a>`;
@@ -462,7 +529,7 @@ function getWiki(countryName) {
                     document.getElementById('publishedAt6').innerHTML = result.data.articles[6].publishedAt;
                     document.getElementById('newsUrl6').innerHTML = `<a href="${result.data.articles[6].url}" target="_blank">Click Here To Read More</a>`;
 
-
+                    
                     
                    
                 },
@@ -483,17 +550,26 @@ function getWeather(lat, lng) {
              lng : lng
          },
         success: function (result) {
-            icon1.innerHTML = `<img src="${result.current.condition.icon}" alt="weather icon">`;
-            temp.innerHTML = result.current.temp_c + "°C";
-            feelsLike.innerHTML = result.current.feelslike_c + "°C";
-            description.innerHTML = result.current.condition.text;
-            icon2.innerHTML = `<img src="${result.forecast.forecastday[0].day.condition.icon}" alt="weather icon">`;
-            dateForecast.innerHTML = result.forecast.forecastday[0].date;
-            maxTemp.innerHTML = result.forecast.forecastday[0].day.maxtemp_c + "°C";
-            minTemp.innerHTML = result.forecast.forecastday[0].day.mintemp_c + "°C";
-            description2.innerHTML = result.forecast.forecastday[0].day.condition.text;
-           
-           
+            console.log(result);
+            const date = new moment(result.forecast.forecastday[0].date);
+            
+            modalLabel.innerHTML = `${result.location.name}, ${result.location.country}`;
+            maxTemp0.innerHTML = result.forecast.forecastday[0].day.maxtemp_c;
+            minTemp0.innerHTML = result.forecast.forecastday[0].day.mintemp_c;
+            $('#icon1').attr("src", d.forecast[0].conditionIcon);
+            description.innerHTML = result.forecast.forecastday[0].day.condition.text;
+            
+            day1Date.innerHTML = date.add(1, 'days').format('dddd, Do MMMM');
+            maxTemp1.innerHTML = result.forecast.forecastday[1].day.maxtemp_c;
+            minTemp1.innerHTML = result.forecast.forecastday[1].day.mintemp_c;
+            $('#icon2').attr("src", d.forecast[1].conditionIcon);
+                   
+            day2Date.innerHTML = date.add(2, 'days').format('dddd, Do MMMM');
+            maxTemp2.innerHTML = result.forecast.forecastday[2].day.maxtemp_c;
+            minTemp2.innerHTML = result.forecast.forecastday[2].day.mintemp_c;
+            $('#icon3').attr("src", d.forecast[2].conditionIcon);
+                   
+           lastUpdated.innerHTML = `Last Updated: ${result.current.last_updated}. moment().format('dddd, Do MMMM')`;
            
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -550,7 +626,7 @@ function getFlag(countryCode) {
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
                 const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: airportIcon}).addTo(airports);
-                marker.bindPopup(`<b> Airport <br> ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
+                marker.bindPopup(` ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
             }
            
         },
@@ -582,7 +658,7 @@ function getFlag(countryCode) {
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
                 const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hospitalIcon}).addTo(hospitals);
-                marker.bindPopup(`<b> Hospital <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hospitals);
+                marker.bindPopup(`${result.data.geonames[i].asciiName}</b>`).addTo(hospitals);
             }
            
         },
@@ -614,7 +690,7 @@ function getFlag(countryCode) {
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
                 const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: universityIcon}).addTo(universities);
-                marker.bindPopup(`<b> University <br> ${result.data.geonames[i].asciiName}</b>`).addTo(universities);
+                marker.bindPopup(`${result.data.geonames[i].asciiName}</b>`).addTo(universities);
             }
            
         },
@@ -646,7 +722,7 @@ function getFlag(countryCode) {
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
                 const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: hotelIcon}).addTo(hotels);
-                marker.bindPopup(` <b> Hotel <br> ${result.data.geonames[i].asciiName}</b>`).addTo(hotels);
+                marker.bindPopup(`${result.data.geonames[i].asciiName}</b>`).addTo(hotels);
             }
            
         },
@@ -707,24 +783,26 @@ function selectCountry(){
         },
         
         success: function (result) {
+            
 
             let countryCode = result.data.results[0].components.country_code.toUpperCase();
             userCurrency = result.data.results[0].annotations.currency.iso_code;
             let countryName = result.data.results[0].components.country;
             let unspacedCountryName = countryName.split(" ").length > 1 ? countryName.split(" ").join("") : countryName;
-            
+            let capitalCity = result.data.results[0].components.city;
             
             getWeather(lat, lng);
             getCountryInfo(countryCode);
             allMarkers(countryCode);
             getWiki(unspacedCountryName);
-            getTimeZone(lat, lng);
             getNews(countryCode);
             getBorder(countryCode);
-            getConversion(userCurrency);
+            //getConversion(userCurrency);
             getCountries();
             getFlag(countryCode);
+            getHolidays(countryCode);
             
+
             $.ajax({
                 type: "GET",
                 url: "libs/php/getCountryList.php",
@@ -759,6 +837,5 @@ function selectCountry(){
 }
 
 
-  
   
   
