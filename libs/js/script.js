@@ -26,8 +26,9 @@ const maxTemp = document.getElementById('maxtemp');
 const minTemp = document.getElementById('mintemp');
 const description2 = document.getElementById('weatherDescriptionForecast');
 const countryContainer = document.getElementById('country');
+const getRate = document.getElementById('exchangeRate');
 let userCurrency = "";
-let capitalCity;
+let capitalCity = '';
 let fetched = false;
 
 
@@ -107,6 +108,16 @@ airports = L.markerClusterGroup({
   let myLayer;
   myLayer = L.geoJSON().addTo(map);
   
+  var myIcon = L.ExtraMarkers.icon({
+    icon: 'fa-coffee',
+    markerColor: 'blue',
+    shape: 'penta',
+    prefix: 'fa'
+});
+var marker = L.marker([51.505, -0.09], { icon: myIcon }).addTo(map);
+
+marker.bindTooltip('This is a marker tooltip').openTooltip();
+
 L.easyButton("fa-info fa-lg", function (btn, map) {
     $("#myModal").modal("show");
   }).addTo(map); 
@@ -216,7 +227,7 @@ function getCountries() {
                 
 
                 document.getElementById('localCurrency').innerHTML = userCurrency;
-                getWeather(latitude, longitude);
+                //getWeather(latitude, longitude);
                 getCountryInfo(countryCode);
                 getWiki(unspacedCountryName);
                 getNews(countryCode);
@@ -225,6 +236,7 @@ function getCountries() {
                 getBorder(countryCode);
                 getFlag(countryCode);
                 getHolidays(countryCode);
+                selectCountry(countryCode);
                
                 
                 
@@ -266,14 +278,14 @@ $.ajax({
     },
     success: function (result) {
     var holidays = JSON.parse(result);
-      console.log(holidays);
+      
 
                 
-                 holidays.forEach(function(holiday) {
+                 holidays.response.holidays.forEach(function(holiday) {
                      $('#holidayName').append('<div>' + holiday.name + '</div>');
-                     $('#holidayDate').append('<div>' + holiday.date + '</div>');
+                     $('#holidayDate').append('<div>' + new moment (holiday.date.iso).format('DD-MM-YYYY') + '</div>');
                      $('#holidayType').append('<div>' + holiday.type + '</div>');
-                     $('#holidayDescription').append('<div>' + holiday.description + '</div>');
+                    
                  });
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -391,34 +403,34 @@ function getConversion(userCurrency) {
 
 }
 
-    convert.addEventListener('click', function (e) {
+//     convert.addEventListener('click', function (e) {
         
-    $.ajax({
-        url: "libs/php/conversion.php",
-        type: "GET",
+//     $.ajax({
+//         url: "libs/php/conversion.php",
+//         type: "GET",
         
-        dataType: "json",
-        data: {
-            from_currency : userCurrency
+//         dataType: "json",
+//         data: {
+//             from_currency : userCurrency
             
-        },
-        success: function (result) {
-            const exchangeRate = parseInt(amount.value)/result.data[`USD_${userCurrency}`] + "";
-            finalAmount.innerHTML = exchangeRate.substring(0, 5);
+//         },
+//         success: function (result) {
+//             const exchangeRate = parseInt(amount.value)/result.data[`USD_${userCurrency}`] + "";
+//             finalAmount.innerHTML = exchangeRate.substring(0, 5);
            
             
            
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            const data = JSON.parse(jqXHR.responseText.replace("*", ""));
-            const exchangeRate = parseInt(amount.value)/data.data[`USD_${userCurrency}`] + "";
-            finalAmount.innerHTML = exchangeRate.substring(0, 5);
+//         },
+//         error: function (jqXHR, textStatus, errorThrown) {
+//             const data = JSON.parse(jqXHR.responseText.replace("*", ""));
+//             const exchangeRate = parseInt(amount.value)/data.data[`USD_${userCurrency}`] + "";
+//             finalAmount.innerHTML = exchangeRate.substring(0, 5);
            
             
             
-        }
-    });
-});
+//         }
+//     });
+// });
 
 
 
@@ -492,43 +504,37 @@ function getWiki(countryName) {
                     
                 },
                 success: function (result) {
+                  
+                 const articles = result.data.articles;
+                 const newsContainer = document.getElementById('News');
+                 newsContainer.innerHTML = articles.map(article => {
+                    return `<table class="table table-borderless">
+                
+                    <tr>
+          
+                      <td rowspan="2" width="50%">
+                        <img class="img-fluid rounded" src="${article.image}" alt="" title="">
+                      </td>
+                      
+                      <td>
+                        <a href="${article.url}" class="fw-bold fs-6 text-black" target="_blank">${article.title}</a>
+                      </td>
+                      
+                    </tr>
+                    
+                    <tr>
+                                
+                      <td class="align-bottom pb-0">
+                        
+                        <p class="fw-light fs-6 mb-1" id="publishedAt">${new moment(article.publishedAt).format('dddd, Do MMMM')}</p>
+                        
+                      </td>            
+                      
+                    </tr>
+                    
+                  </table>`
+                 })
                    
-
-                    document.getElementById('newsTitle').innerHTML = result.data.articles[0].title;
-                    document.getElementById('newsDescription').innerHTML = result.data.articles[0].description;
-                    document.getElementById('newsUrl').innerHTML = `<a href="${result.data.articles[0].url}" target="_blank">Click Here To Read More</a>`;
-                    document.getElementById('publishedAt').innerHTML = result.data.articles[0].publishedAt;
-
-                    document.getElementById('newsTitle1').innerHTML = result.data.articles[1].title;
-                    document.getElementById('newsDescription1').innerHTML = result.data.articles[1].description;
-                    document.getElementById('publishedAt1').innerHTML = result.data.articles[1].publishedAt;
-                    document.getElementById('newsUrl1').innerHTML = `<a href="${result.data.articles[1].url}" target="_blank">Click Here To Read More</a>`;
-
-                    document.getElementById('newsTitle2').innerHTML = result.data.articles[2].title;
-                    document.getElementById('newsDescription2').innerHTML = result.data.articles[2].description;
-                    document.getElementById('publishedAt2').innerHTML = result.data.articles[2].publishedAt;
-                    document.getElementById('newsUrl2').innerHTML = `<a href="${result.data.articles[2].url}" target="_blank">Click Here To Read More</a>`;
-
-                    document.getElementById('newsTitle3').innerHTML = result.data.articles[3].title;
-                    document.getElementById('newsDescription3').innerHTML = result.data.articles[3].description;
-                    document.getElementById('publishedAt3').innerHTML = result.data.articles[3].publishedAt;
-                    document.getElementById('newsUrl3').innerHTML = `<a href="${result.data.articles[3].url}" target="_blank">Click Here To Read More</a>`;
-
-                    document.getElementById('newsTitle4').innerHTML = result.data.articles[4].title;
-                    document.getElementById('newsDescription4').innerHTML = result.data.articles[4].description;
-                    document.getElementById('publishedAt4').innerHTML = result.data.articles[4].publishedAt;
-                    document.getElementById('newsUrl4').innerHTML = `<a href="${result.data.articles[4].url}" target="_blank">Click Here To Read More</a>`;
-
-                    document.getElementById('newsTitle5').innerHTML = result.data.articles[5].title;
-                    document.getElementById('newsDescription5').innerHTML = result.data.articles[5].description;
-                    document.getElementById('publishedAt5').innerHTML = result.data.articles[5].publishedAt;
-                    document.getElementById('newsUrl5').innerHTML = `<a href="${result.data.articles[5].url}" target="_blank">Click Here To Read More</a>`;
-
-                    document.getElementById('newsTitle6').innerHTML = result.data.articles[6].title;
-                    document.getElementById('newsDescription6').innerHTML = result.data.articles[6].description;
-                    document.getElementById('publishedAt6').innerHTML = result.data.articles[6].publishedAt;
-                    document.getElementById('newsUrl6').innerHTML = `<a href="${result.data.articles[6].url}" target="_blank">Click Here To Read More</a>`;
-
                     
                     
                    
@@ -539,37 +545,36 @@ function getWiki(countryName) {
             });
         }
 
-function getWeather(lat, lng) {
+function getWeather(capitalCity) {
     $.ajax({
         url: "libs/php/getWeather.php",
         type: "GET",
         
         dataType: "json",
          data: {
-             lat : lat,
-             lng : lng
+             city : capitalCity
          },
         success: function (result) {
-            console.log(result);
+          
             const date = new moment(result.forecast.forecastday[0].date);
             
             modalLabel.innerHTML = `${result.location.name}, ${result.location.country}`;
             maxTemp0.innerHTML = result.forecast.forecastday[0].day.maxtemp_c;
             minTemp0.innerHTML = result.forecast.forecastday[0].day.mintemp_c;
-            $('#icon1').attr("src", d.forecast[0].conditionIcon);
+            icon1.src = result.forecast.forecastday[0].day.condition.icon;
             description.innerHTML = result.forecast.forecastday[0].day.condition.text;
             
-            day1Date.innerHTML = date.add(1, 'days').format('dddd, Do MMMM');
+            day1Date.innerHTML = date.add(1, 'days').format('ddd, Do MMM');
             maxTemp1.innerHTML = result.forecast.forecastday[1].day.maxtemp_c;
             minTemp1.innerHTML = result.forecast.forecastday[1].day.mintemp_c;
-            $('#icon2').attr("src", d.forecast[1].conditionIcon);
+            icon2.src = result.forecast.forecastday[1].day.condition.icon;
                    
-            day2Date.innerHTML = date.add(2, 'days').format('dddd, Do MMMM');
+            day2Date.innerHTML = date.add(2, 'days').format('ddd, Do MMM');
             maxTemp2.innerHTML = result.forecast.forecastday[2].day.maxtemp_c;
             minTemp2.innerHTML = result.forecast.forecastday[2].day.mintemp_c;
-            $('#icon3').attr("src", d.forecast[2].conditionIcon);
+            icon3.src = result.forecast.forecastday[2].day.condition.icon;
                    
-           lastUpdated.innerHTML = `Last Updated: ${result.current.last_updated}. moment().format('dddd, Do MMMM')`;
+           
            
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -579,6 +584,66 @@ function getWeather(lat, lng) {
 
 
   }
+
+  function selectCountry(countryCode){
+    $.ajax({
+        type: "GET",
+        url: "libs/php/countries.php",
+        dataType: "json",
+        success: function (result) {
+            
+           if(countryCode){
+            const currentCountry = result.data.filter(country => country.cca2 === countryCode)[0].capital[0];
+            const unspacedCapitalCity = currentCountry.split(" ").length > 1 ? currentCountry.split(" ").join("%20") : currentCountry;
+            capitalCity = unspacedCapitalCity;
+            getWeather(capitalCity);
+           }
+
+        //   
+        
+        getRate.innerHTML = result.data.map(country => {
+            if (country.currencies) {
+                const keys = Object.keys(country.currencies);
+                
+        
+                // Check if keys exist before accessing properties
+                const currencyName = keys.length > 0 ? country.currencies[keys[0]].name : 'Unknown Currency';
+        
+                return `<option value='${country.currencies[keys[0]]}'>${currencyName}</option>`;
+            } else {
+                
+                return '';  // or provide a default option, or handle the error as needed
+            }
+        });
+        
+
+            countryContainer.innerHTML = result.data.map(country => {
+                
+    
+                return `<option data-lng="${country.latlng[0]}" data-lat="${country.latlng[1]}" data-currencies="${country.currencies ? Object.keys(country.currencies)[0] : ""}" value="${country.cca2}">${country.name.common}</option>`;
+            }).join(""); // Added the join() function to concatenate the option elements properly
+    
+            $("#country").html($("#country option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            }));
+    
+            // Automatically select the country of location
+            let userCountry = ""; // Set the user's country based on the location
+            $("#country option").each(function () {
+                if ($(this).text() === userCountry) {
+                    $(this).prop('selected', true);
+                    return false; // Break out of the loop once the country is selected
+                    
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+    
+}
+
 function getFlag(countryCode) {
     $.ajax({
         url: "libs/php/countryFlag.php",
@@ -626,7 +691,7 @@ function getFlag(countryCode) {
             });
             for (let i = 0; i < result.data.geonames.length; i++) {
                 const marker = L.marker([result.data.geonames[i].lat, result.data.geonames[i].lng], {icon: airportIcon}).addTo(airports);
-                marker.bindPopup(` ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
+                marker.bindTooltip(` ${result.data.geonames[i].asciiName}</b>`).addTo(airports);
             }
            
         },
@@ -737,39 +802,6 @@ map.addLayer(airports);
     map.addLayer(universities);
     map.addLayer(hotels);
 
-function selectCountry(){
-    $.ajax({
-        type: "GET",
-        url: "libs/php/countries.php",
-        dataType: "json",
-        success: function (result) {
-            
-            countryContainer.innerHTML = result.data.map(country => {
-                
-    
-                return `<option data-lng="${country.latlng[0]}" data-lat="${country.latlng[1]}" data-currencies="${country.currencies ? Object.keys(country.currencies)[0] : ""}" value="${country.cca2}">${country.name.common}</option>`;
-            }).join(""); // Added the join() function to concatenate the option elements properly
-    
-            $("#country").html($("#country option").sort(function (a, b) {
-                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-            }));
-    
-            // Automatically select the country of location
-            let userCountry = ""; // Set the user's country based on the location
-            $("#country option").each(function () {
-                if ($(this).text() === userCountry) {
-                    $(this).prop('selected', true);
-                    return false; // Break out of the loop once the country is selected
-                    
-                }
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
-    
-}
 
   function fetchOpenCage(lat, lng){
     $.ajax({
@@ -789,9 +821,9 @@ function selectCountry(){
             userCurrency = result.data.results[0].annotations.currency.iso_code;
             let countryName = result.data.results[0].components.country;
             let unspacedCountryName = countryName.split(" ").length > 1 ? countryName.split(" ").join("") : countryName;
-            let capitalCity = result.data.results[0].components.city;
             
-            getWeather(lat, lng);
+            
+            
             getCountryInfo(countryCode);
             allMarkers(countryCode);
             getWiki(unspacedCountryName);
@@ -801,6 +833,8 @@ function selectCountry(){
             getCountries();
             getFlag(countryCode);
             getHolidays(countryCode);
+            selectCountry(countryCode);
+            //getWeather(capitalCity);
             
 
             $.ajax({

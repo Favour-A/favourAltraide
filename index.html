@@ -5,10 +5,10 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Gazetteer</title>
 
-      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+      <!-- <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-      <link rel="manifest" href="/site.webmanifest">
+      <link rel="manifest" href="/site.webmanifest"> -->
 
       <link rel="stylesheet" href="./libs/css/leaflet1.css">
       <link rel="stylesheet" href="./libs/css/toastify.css">
@@ -158,7 +158,6 @@
           </div>
         </div> 
       
-        <!-- <div id="modal1" class="modal" data-bs-backdrop="false" tabindex="-1" role="dialog">
           
           <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content shadow">
@@ -329,7 +328,7 @@
             </div>
             
             <div class="modal-footer">
-              <p class="fs-6 fw-light">Last updated <span id="lastUpdated"></span>. Powered by <a href="https://www.weatherapi.com/" target="_blank" title="Free Weather API">WeatherAPI.com</a></p>
+              <p class="fs-6 fw-light"> Powered by <a href="https://www.weatherapi.com/" target="_blank" title="Free Weather API">WeatherAPI.com</a></p>
             </div>
       
           </div>
@@ -348,18 +347,23 @@
               <div class="modal-body">
                 <div class="container text-center">
                   <h6 class="fs-4 fw-bolder">Upcoming Public Holidays</h6>
-                    <div class="row  bg-dark-subtle">
                     
-                      <div class="col-sm-6" id="holidayName"></div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6"id="holidayDate"></div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6" id="holidayType"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-8 ">
-                          <div class="fw-bold fs-6"id="holidayDescription"></div>
-                        </div>
+                      <table class="table table-striped">
+                        <tr>
+                          <td class="text-center">
+                            <div id="holidayName"></div>
+                            
+                          </td>
+                          <td>
+                            <div id="holidayDate"></div>
+                            
+                          </td>
+                          <td  class="text-end">
+                            <div id="holidayType"></div>
+                          </td>
+                        </tr>
+                      </table>
                     
-                  </div>
                 </div>
               </div>
               <div class="modal-footer">
@@ -408,80 +412,41 @@
         
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content shadow">
-            <div class="modal-header bg-primary bg-gradient text-white">
+            <div class="modal-header bg-danger bg-gradient text-white">
               <h5 class="modal-title">BREAKING NEWS</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              <div id="News">
               
-              <div id="news" class="container">
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription" class="col 12"> <a id="newsUrl" href="#" target="_blank" ></a></p>
-                    
-                    <p id="publishedAt" class=" col 4 fst-italic"></p>
-                  </div>
-
-                </div>
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle1" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription1" class="col 12"></p>
-                    <a id="newsUrl1" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt1" class=" col 4 fst-italic"></p>
-                  </div>
-                </div>
-
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-2 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle2" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription2" class="col 12"></p>
-                    <a id="newsUrl2" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt2" class=" col 4 fst-italic"></p>
-                  </div>
-                </div>
-
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle3" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription3" class="col 12"></p>
-                    <a id="newsUrl3" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt3" class=" col 4 fst-italic"></p>
-                  </div>
-
-                </div>
-
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle4" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription4" class="col 12"></p>
-                    <a id="newsUrl4" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt4" class=" col 4 fst-italic"></p>
-                  </div>
-                </div>
-
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle5" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription5" class="col 12"></p>
-                    <a id="newsUrl5" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt5" class=" col 4 fst-italic"></p>
-                  </div>
-                </div>
-
-                <div class="row g-2 justify-content-center">
-                  <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <h6 id="newsTitle6" class="col 10 fw-bold"></h6>
-                    <p id="newsDescription6" class="col 12"></p>
-                    <a id="newsUrl6" href="#" target="_blank" class="col 8"></a>
-                    <p id="publishedAt6" class=" col 4 fst-italic"></p>
-                  </div>
-                </div>
+                <table class="table table-borderless">
                 
+                  <tr>
+        
+                    <td rowspan="2" width="50%">
+                      <img class="img-fluid rounded" src="https://ichef.bbci.co.uk/news/240/cpsprodpb/14498/production/_130069038_gettyimages-519726116.jpg" alt="" title="">
+                    </td>
+                    
+                    <td>
+                      <a href="https://www.bbc.co.uk/news/entertainment-arts-65881813" class="fw-bold fs-6 text-black" target="_blank">Sir Paul McCartney says AI has enabled a 'final' Beatles song</a>
+                    </td>
+                    
+                  </tr>
                   
-
-                </div>
+                  <tr>
+                              
+                    <td class="align-bottom pb-0">
+                      
+                      <p class="fw-light fs-6 mb-1 fst-italic" id="publishedAt"></p>
+                      
+                    </td>            
+                    
+                  </tr>
+                  
+                </table>
+              </div>
+              
+               
 
 
               </div>
@@ -500,24 +465,35 @@
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <h6>Local currency : <span id="localCurrency"></span></h6>
+              
+              <form>
+
+                <div class="form-floating mb-3">
       
-              <div id="lay">
-                <div class="mb-3 row">
-                  <label for="amount" class="form-label">Enter Amount</label>
-                  <div class="col-sm-7">
-                    <input type="number" class="form-control" id="amount" placeholder="Enter Amount To Convert">
-                  </div>
-                  <div class="col-sm-5">
-                    <button id="convertButton" type="submit" class="btn btn-primary">Convert</button>
-                  </div>
+                  <input id="fromAmount" type="number" class="form-control" value="1" min="1" step="1">
+                  <label >From USD</label>
+      
                 </div>
       
-                <div>
-                  <p>Result (USD) : <span id="finalRate"></span></p>
-                  <p>Exchange Rate (USD) : = <span id="conversion"></span></p>
+                <div class="form-floating mb-3">
+      
+                  <select id="exchangeRate" class="form-select">
+                    <option value='5.793038'>Romanian New Leu</option>
+                   
+                  </select>
+                  
+                  <label for="exchangeRate">Convert to</label>
+      
                 </div>
-              </div>
+      
+                <div class="form-floating">
+      
+                  <input id="toAmount" type="text" class="form-control" disabled>
+                  <label for="toAmount">Result</label>
+      
+                </div>
+      
+              </form>
             </div>
       
             <div class="modal-footer">
