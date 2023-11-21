@@ -17,6 +17,7 @@
       <link rel="stylesheet" href="./libs/css/extramarkers.css">
       <link rel="stylesheet" href="./libs/css/bootstrap.css">
       <link rel="stylesheet" href="./libs/css/easybuttons.css">
+      <link rel="stylesheet" href="./libs/css/leaflet.extra-markers.min.css">
       <link rel="stylesheet" href="./libs/css/style.css">
 
   </head>
@@ -157,57 +158,6 @@
             </div>
           </div>
         </div> 
-      
-          
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content shadow">
-              <div class="modal-header bg-primary bg-gradient text-white">
-                <h5 class="modal-title">Weather</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <div class="container text-center">
-                  <h6 class="fs-4 fw-bolder">Current Weather</h6>
-                    <div class="row  bg-dark-subtle">
-                    
-                      <div class="col-sm-6" id="icon">
-                      </div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6"id="temperature"></div>
-                      <div class="col-sm-3 bg-danger-subtle fw-bold fs-6" id="feelslike"></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-8 ">
-                          <div class="fw-bold fs-6"id="weatherDescription"></div>
-                        </div>
-                    
-                  </div>
-
-                  <div class="container text-center">
-                    <h6 class="fs-4 fw-bolder">Weather Forecast</h6>
-                      <div class="row  bg-dark-subtle">
-                      
-                        <div class="col-sm-6" id="iconforecast"></div>
-                        <div class="col-sm-4 fw-light fs-6" id="date"></div>
-                      </div>
-                      <div class="row">
-                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="maxtemp" id="maxtemp"></div>
-                          <div class="col-sm-6 bg-danger-subtle fw-bold fs-6" id="mintemp" id="mintemp"></div>
-                      <div class="row">
-                          <div class="col-sm-8">
-                            <div class=" bg-danger-subtle fw-bold fs-6"id="weatherDescriptionForecast"></div>
-                          </div>
-                      
-                      </div>
-                  </div>
-                  
-                </div>
-                <div class="modal-footer">
-                  <p class="fs-6 fw-light">Last updated <span id="lastUpdated"></span>. Powered by <a href="https://www.weatherapi.com/" target="_blank" title="Free Weather API">WeatherAPI.com</a></p>                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-      </div> -->
 
       <div id="weatherModal" class="modal fade" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="false" aria-labelledby="weatherModalLabel" aria-hidden="true">
     
@@ -519,7 +469,7 @@
       <script src="./libs/js/leaflet3.extra-markers.js"></script>
       <script src="./libs/js/bootstrap.min.js"></script>
       <script src="./libs/js/easy-button.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+      <script src="./libs/js/moment.js"></script>
 
 
       <script src="./libs/js/script.js"></script>
